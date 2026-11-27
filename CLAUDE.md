@@ -1,4 +1,4 @@
-# Ledger
+# calisthenics-workouts
 
 Offline training log as a progressive web app. Plain HTML, CSS and JavaScript served by GitHub
 Pages from `main`. All data lives in the browser's `localStorage`; there is no backend.
