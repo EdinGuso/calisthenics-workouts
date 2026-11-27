@@ -87,9 +87,9 @@
     <div class="timerwrap">
       <div class="sidelab" id="w-side">Left side</div>
       <div class="bigtime" id="w-clock">0:00</div>
-      <div class="unit" id="w-tgtline">Target 45 s</div>
+      <div class="unit" id="w-tgtline">Hold 30 s</div>
     </div>
-    <button class="btn btn-primary" id="w-stop" style="margin-top:18px">Stop</button>
+    <button class="btn btn-primary" id="w-stop" style="margin-top:18px">Dropped early</button>
   </div>
 
   <!-- rep variant -->
@@ -106,6 +106,7 @@
     </div>
     <button class="btn btn-primary" id="w-log">Log 0</button>
   </div>
+  <button class="btn btn-ghost" id="w-skip" style="margin-top:10px">Skip this exercise</button>
 </section>
 
 <!-- ============ REST ============ -->
@@ -167,7 +168,7 @@
   <div class="chips" id="st-chips"></div>
   <div class="card">
     <div id="st-chart"></div>
-    <div class="legend"><span><i></i>Per session</span><span><i class="avg"></i>Average of 5</span></div>
+    <div class="legend"><span><i></i>Per session</span><span><i class="avg"></i>Average of 5</span><span id="st-skiplegend"><b class="hollow"></b>Exercise skipped</span></div>
   </div>
   <div class="btn-row" style="margin-top:10px">
     <button class="btn" id="st-mode">Show by set</button>
@@ -197,6 +198,14 @@
   <h2>Bodyweight</h2>
   <p class="small dim" style="margin-top:-6px">Used only to work out load moved.</p>
   <input class="plain" id="cfg-bw" type="number" inputmode="decimal" placeholder="kg">
+
+  <h2>Side plank hold</h2>
+  <p class="small dim" style="margin-top:-6px">Seconds per side, every set.</p>
+  <div class="stepper">
+    <button id="cfg-plank-minus">−</button>
+    <input id="cfg-plank" type="number" readonly value="30">
+    <button id="cfg-plank-plus">+</button>
+  </div>
 
   <h2>Your data</h2>
   <p class="small dim" style="margin-top:-6px">Everything lives on this phone only. Export now and then.</p>

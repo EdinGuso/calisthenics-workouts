@@ -1,5 +1,7 @@
 /* Settings screen and the first-launch bodyweight question. */
 import { store, blank, hasBw, exportJson, exportName, parseImport } from "./store.js";
+import { EX } from "./config.js";
+import { clampPlank } from "./targets.js";
 import { save, show, paintHome, toast } from "./ui.js";
 
 function setBw(v){
@@ -8,7 +10,17 @@ function setBw(v){
   store.db.bw = v; save(); toast("Saved"); return true;
 }
 
+function paintPlank(){
+  document.getElementById("cfg-plank").value = store.db.targets.plank;
+}
+function stepPlank(d){
+  store.db.targets.plank = clampPlank(store.db.targets.plank + d * EX.plank.step);
+  save(); paintPlank();
+}
+
 export function initSettings(){
+  document.getElementById("cfg-plank-minus").onclick = () => stepPlank(-1);
+  document.getElementById("cfg-plank-plus").onclick  = () => stepPlank(1);
   const bw = document.getElementById("cfg-bw");
   bw.onchange = () => { if(!setBw(bw.value)) bw.value = hasBw(store.db) ? store.db.bw : ""; };
   document.getElementById("bw-ask-save").onclick = () => {
@@ -27,15 +39,15 @@ export function initSettings(){
     const r = new FileReader();
     r.onload = () => {
       try{
-        store.db = parseImport(r.result); save(); paintHome();
+        store.db = parseImport(r.result); save(); paintHome(); paintPlank();
         toast("Imported " + store.db.sessions.length + " sessions");
-      }catch(e){ toast("That file did not read"); }
+      }catch(e){ toast(e.message); }
     };
     r.readAsText(f);
   };
   document.getElementById("cfg-reset").onclick = () => {
     if(confirm("Erase every session, milestone and streak? This cannot be undone.")){
-      store.db = blank(); save(); paintHome(); show("s-home"); toast("Erased");
+      store.db = blank(); save(); paintHome(); paintPlank(); show("s-home"); toast("Erased");
     }
   };
   (async () => {

@@ -21,8 +21,15 @@ To be added.
 - **A week card that shows today's cost.** The home screen shows this week's sessions and how
   tight the remaining days are (on track, getting tight, at risk, out of days).
 - **Adaptive per-set targets.** For exercises done to failure, the target for each set is one
-  more than the best of the last three sessions at that set. Exercises with a fixed target ask
-  how it felt when every set met it and adjust by one step, or ease down when a set falls short.
+  more than the best of the last three sessions at that set. The single-leg bridge target
+  follows the weakest set of the last session: when every set met the target, it asks how it
+  felt and adds one (easy), keeps it (about right) or takes one off (hard).
+- **Timed holds that stop on their own.** The side plank counts down from a fixed target per
+  side (30 s by default, set in Settings) and logs it at zero. "Dropped early" logs the time
+  actually held.
+- **Skipping is not failing.** An exercise can be skipped before its first set. Nothing is
+  logged for it, so its targets and charts are untouched, and the session-volume chart draws
+  that session as a hollow point.
 - **Milestones that cannot be lost.** Lifetime reps and hold time per exercise, sessions,
   banked weeks, total load moved and time under tension.
 - **Derived, not stored.** Streak, freezes, totals and milestones are recomputed from the
@@ -32,8 +39,12 @@ To be added.
 
 - Everything is stored in the browser's `localStorage`. There is no account, server or
   analytics.
-- Settings has export and import to a JSON file. Export now and then: clearing the browser's
-  data, or removing a home-screen app on iOS, deletes the log.
+- The data is one JSON value under the key `workouts.v2`:
+  `{v:2, bw, sessions:[{id, ts, log}], commits, targets:{bridge, plank}}`. A session's `log`
+  maps each exercise done to its sets; a skipped exercise has no entry.
+- Settings has export and import to a JSON file. Import accepts only files in this format.
+  Export now and then: clearing the browser's data, or removing a home-screen app on iOS,
+  deletes the log.
 - On iOS, add the page to the home screen. It then runs full screen and keeps its own storage.
 
 ## Run locally
