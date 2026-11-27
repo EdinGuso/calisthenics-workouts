@@ -2,7 +2,7 @@
 import { EX, REP_TIERS, SEC_TIERS, WEEK_TIERS, CHAIN_TIERS, SESS_TIERS, TON_TIERS, HOUR_TIERS } from "./config.js";
 import { hasBw } from "./store.js";
 import { chain } from "./weeks.js";
-import { history } from "./targets.js";
+import { history, targetFor } from "./targets.js";
 
 export function dur(s){
   if(s >= 3600) return +(s/3600).toFixed(s%3600 ? 1 : 0) + (s < 7200 ? " hour" : " hours");
@@ -12,6 +12,20 @@ export function dur(s){
 
 export function lifetime(db, id){
   return history(db, id).reduce((a,x) => a + x.vals.reduce((p,q) => p+q, 0), 0) * EX[id].sides;
+}
+/* The progress screen's summary for one exercise; null if it was never done. An archived
+   exercise is no longer trained, so it has no next targets.                               */
+export function exerciseSummary(db, id){
+  const h = history(db, id);
+  if(!h.length) return null;
+  const totals = h.map(x => x.vals.reduce((a,b) => a+b, 0));
+  return {
+    sessions: h.length,
+    bestSet: Math.max.apply(null, h.map(x => Math.max.apply(null, x.vals))),
+    bestTotal: Math.max.apply(null, totals),
+    lifetime: lifetime(db, id),
+    targets: EX[id].archived ? null : [0,1,2].map(i => targetFor(db, id, i))
+  };
 }
 /* null until a bodyweight is set. Bodyweight exercises move a share of it per rep. A pack
    exercise moves the pack weight saved on that session, so changing the setting later never

@@ -4,7 +4,7 @@ import assert from "node:assert/strict";
 import { EX, FULL, ARCHIVED } from "../js/config.js";
 import { newSession, packValue } from "../js/store.js";
 import { targetFor } from "../js/targets.js";
-import { lifetime, tonnage, tut, milestones } from "../js/milestones.js";
+import { lifetime, tonnage, tut, milestones, exerciseSummary } from "../js/milestones.js";
 import { chartData, chartHtml, switchAt } from "../js/chart.js";
 
 const NOW = at(2026, 6, 1);
@@ -41,6 +41,16 @@ test("programme: backpack rows start without a target", () => {
   assert.equal(targetFor(db, "packrow", 0), null);
   db.sessions.push(withPack(at(2026, 5, 1, 7), { packrow: [10, 8, 6] }, 10));
   assert.deepEqual([0, 1, 2].map(i => targetFor(db, "packrow", i)), [11, 9, 7]);
+});
+
+test("exerciseSummary: archived rows show their history but no next targets", () => {
+  const db = dbWith(rowEra().concat(withPack(at(2026, 5, 1, 7), { ...rest, packrow: [10, 8, 6] }, 10)));
+  assert.deepEqual(exerciseSummary(db, "row"),
+    { sessions: 10, bestSet: 8, bestTotal: 18, lifetime: 180, targets: null });
+  assert.deepEqual(exerciseSummary(db, "packrow"),
+    { sessions: 1, bestSet: 10, bestTotal: 24, lifetime: 48, targets: [11, 9, 7] });
+  assert.deepEqual(exerciseSummary(db, "pushup").targets, [11, 9, 7]);
+  assert.equal(exerciseSummary(dbWith([]), "pushup"), null);
 });
 
 test("newSession: the pack weight is saved only when backpack rows were done", () => {
