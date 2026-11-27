@@ -2,8 +2,7 @@
 import { EX, FULL, ARCHIVED, TON_TIERS } from "./config.js";
 import { store, write, hasBw, hasPack } from "./store.js";
 import { weekKey, chain, weekState } from "./weeks.js";
-import { history, targetFor } from "./targets.js";
-import { lifetime, tonnage, milestones } from "./milestones.js";
+import { exerciseSummary, tonnage, milestones } from "./milestones.js";
 import { chartHtml, switchAt } from "./chart.js";
 import { click } from "./audio.js";
 
@@ -49,15 +48,12 @@ function paintStats(){
 
   let sum = "";
   if(stSel !== "__vol"){
-    const h = history(DB, stSel), e = EX[stSel];
-    if(h.length){
-      const totals = h.map(x => x.vals.reduce((a,b)=>a+b,0));
-      const best = Math.max.apply(null, h.map(x => Math.max.apply(null, x.vals)));
-      sum = row("Sessions", h.length) + row("Best single set", best + " " + e.unit) +
-            row("Best session total", Math.max.apply(null,totals) + " " + e.unit) +
-            row("Lifetime", lifetime(DB, stSel).toLocaleString("en-GB") + " " + e.unit) +
-            (e.archived ? "" :
-              row("Next targets", [0,1,2].map(i => targetFor(DB, stSel, i) || "-").join(" / ")));
+    const s = exerciseSummary(DB, stSel), u = " " + EX[stSel].unit;
+    if(s){
+      sum = row("Sessions", s.sessions) + row("Best single set", s.bestSet + u) +
+            row("Best session total", s.bestTotal + u) +
+            row("Lifetime", s.lifetime.toLocaleString("en-GB") + u) +
+            (s.targets ? row("Next targets", s.targets.map(t => t || "-").join(" / ")) : "");
     } else sum = '<p class="dim small" style="margin:0">Not done yet.</p>';
   } else {
     const c = chain(DB);
