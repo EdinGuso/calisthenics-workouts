@@ -52,16 +52,14 @@ p{margin:0 0 10px}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px}
 .card + .card{margin-top:12px}
 
-/* ---- week gauge: two slots, each fillable in halves ---- */
+/* ---- week gauge: two slots, one per session ---- */
 .gauge{display:flex;gap:10px;margin:14px 0 12px}
 .slot{
   flex:1;height:58px;border:1.5px solid var(--line);border-radius:10px;
   position:relative;overflow:hidden;background:#171A26;display:flex
 }
-.half{flex:1;position:relative}
-.half + .half{border-left:1px dashed rgba(255,255,255,.09)}
-.half.fill{background:var(--brass)}
-.slot.done .half.fill{background:var(--sage)}
+.slot.fill{background:var(--brass);border-color:var(--brass)}
+.slot.done.fill{background:var(--sage);border-color:var(--sage)}
 .slot .tag{
   position:absolute;bottom:5px;right:8px;font-family:var(--mono);
   font-size:10px;letter-spacing:.12em;color:var(--muted)
@@ -107,23 +105,6 @@ button{font-family:inherit;font-size:16px;color:inherit;border:none;background:n
 .navrow button{
   flex:1;padding:12px 0;border-radius:10px;border:1px solid var(--line);background:var(--panel);
   font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)
-}
-
-/* ---- choose screen ---- */
-.choice{
-  display:block;width:100%;text-align:left;border-radius:var(--r);padding:22px;
-  border:1px solid var(--line);background:var(--panel);margin-bottom:12px
-}
-.choice.hero{
-  background:linear-gradient(160deg,#2A2438,#1F2130);
-  border-color:var(--brass);padding:28px 22px
-}
-.choice .ttl{font-family:var(--display);font-size:26px;font-weight:700;letter-spacing:-.02em}
-.choice.hero .ttl{font-size:34px;color:var(--brass)}
-.choice .sub{color:var(--muted);font-size:14px;margin-top:4px}
-.choice .credit-tag{
-  font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;
-  color:var(--muted);margin-top:12px;display:block
 }
 
 /* ---- work screen ---- */

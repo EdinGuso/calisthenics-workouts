@@ -4,25 +4,22 @@ import { history } from "./targets.js";
 
 /* sel is an exercise id or "__vol" for session volume; mode is "total" or "sets". */
 export function chartData(db, sel, mode){
-  const isVol = sel === "__vol";
-  let series, marks;
-  if(isVol){
+  let series;
+  if(sel === "__vol"){
     series = [db.sessions.map(s => Object.keys(s.log).reduce((a,k) =>
       a + s.log[k].reduce((p,q)=>p+q,0) * (EX[k].unit==="secs"?0:1), 0))];
-    marks = db.sessions.map(s => s.type);
   } else {
     const h = history(db, sel);
-    marks = h.map(x => x.type);
     series = mode === "total"
       ? [h.map(x => x.vals.reduce((a,b)=>a+b,0))]
       : [0,1,2].map(i => h.map(x => x.vals[i] || 0));
   }
-  return {isVol, series, marks};
+  return {series};
 }
 
 /* width is the container's width in pixels (0 if unknown). */
 export function chartHtml(db, sel, mode, width){
-  const {isVol, series, marks} = chartData(db, sel, mode);
+  const {series} = chartData(db, sel, mode);
   const n = series[0].length;
   if(n < 2){
     return '<p class="dim small" style="margin:26px 0;text-align:center">' +
@@ -45,20 +42,15 @@ export function chartHtml(db, sel, mode, width){
     svg += '<polyline fill="none" stroke="'+cols[si]+'" stroke-width="2" stroke-linejoin="round" points="'+
            s.map((v,i) => X(i)+","+Y(v)).join(" ")+'"/>';
     s.forEach((v,i) => {
-      const hollow = marks[i] === "short";
-      svg += '<circle cx="'+X(i)+'" cy="'+Y(v)+'" r="3.4" fill="'+(hollow?"#14161F":cols[si])+
+      svg += '<circle cx="'+X(i)+'" cy="'+Y(v)+'" r="3.4" fill="'+cols[si]+
              '" stroke="'+cols[si]+'" stroke-width="1.6"/>';
     });
   });
   if(series.length === 1 && n >= 3){         // rolling average of the last 5
     const s = series[0], avg = [];
     for(let i=0;i<n;i++){
-      const w = [];
-      for(let j = Math.max(0, i-4); j <= i; j++){
-        if(isVol && marks[j] === "short") continue;   // short days are not comparable by volume
-        w.push(s[j]);
-      }
-      avg.push(w.length ? w.reduce((a,b)=>a+b,0)/w.length : s[i]);
+      const w = s.slice(Math.max(0, i-4), i+1);
+      avg.push(w.reduce((a,b)=>a+b,0)/w.length);
     }
     svg += '<polyline fill="none" stroke="#6E8CA8" stroke-width="2" stroke-dasharray="5 4" points="'+
            avg.map((v,i) => X(i)+","+Y(v)).join(" ")+'"/>';

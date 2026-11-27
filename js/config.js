@@ -25,9 +25,6 @@ export const FULL = ["pushup","row","squat","pike","bridge","situp","plank"];
 export const SETS = 3;
 export const REST_SET = 20, REST_EX = 60, REST_SIDE = 10;
 
-/* Short-session groups: never two exercises from the same group. */
-export const GROUP = {pushup:"push", pike:"push", squat:"legs", bridge:"legs", situp:"core", plank:"core"};
-
 export const WARMUP = [
   {n:"Cat-cow",                s:45, d:"Slow, breathe with it"},
   {n:"World's greatest stretch", s:60, d:"30 seconds each side"},

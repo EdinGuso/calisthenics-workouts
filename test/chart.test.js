@@ -7,12 +7,10 @@ const golden = fixture("chart-golden");
 
 test("chartData: totals per session for one exercise", () => {
   const d = chartData(fixture(), "pushup", "total");
-  assert.equal(d.isVol, false);
   assert.equal(d.series.length, 1);
   assert.equal(d.series[0].length, 19);
   assert.deepEqual(d.series[0].slice(0, 4), [18, 18, 19, 20]);
   assert.equal(d.series[0][18], 17 + 12 + 8);
-  assert.ok(d.marks.every(m => m === "full"));
 });
 
 test("chartData: one line per set position, missing sets drawn as zero", () => {
@@ -25,7 +23,6 @@ test("chartData: one line per set position, missing sets drawn as zero", () => {
 
 test("chartData: session volume counts reps across exercises, not seconds", () => {
   const d = chartData(fixture(), "__vol", "total");
-  assert.equal(d.isVol, true);
   assert.equal(d.series.length, 1);
   assert.equal(d.series[0][0], 18 + 12 + 30 + 12 + 29 + 37);
   assert.equal(d.series[0][5], 22 + 0 + 35 + 13 + 29 + 42);

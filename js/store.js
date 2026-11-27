@@ -16,6 +16,8 @@ export function load(){
 export function write(db){
   try{ localStorage.setItem(KEY, JSON.stringify(db)); return true; }catch(e){ return false; }
 }
+/* Every session is a full one. type and credit stay in the v1 format until the v2 conversion. */
+export function newSession(ts, log){ return { id: ts, ts, type: "full", credit: 1, log }; }
 export function hasBw(db){ return typeof db.bw === "number" && db.bw > 0; }
 
 /* Export and import files. */

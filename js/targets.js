@@ -1,8 +1,8 @@
-/* Exercise history, per-set targets and the short-session pick. No DOM access. */
-import { EX, FULL, GROUP } from "./config.js";
+/* Exercise history and per-set targets. No DOM access. */
+import { EX } from "./config.js";
 
-export function history(db, id){            // chronological list of {ts,type,vals[]}
-  return db.sessions.filter(s => s.log[id]).map(s => ({ts:s.ts, type:s.type, vals:s.log[id]}));
+export function history(db, id){            // chronological list of {ts,vals[]}
+  return db.sessions.filter(s => s.log[id]).map(s => ({ts:s.ts, vals:s.log[id]}));
 }
 export function targetFor(db, id, setIdx){
   const e = EX[id];
@@ -25,15 +25,4 @@ export function updateCap(db, id, vals, feedback){
     cap = Math.max(e.step, cap - e.step);
   }
   db.caps[id] = cap;
-}
-/* Short session: rows always, plus the two least-used of the other six.
-   The second must come from a different group, so you never get two leg
-   exercises or two core exercises and call it a session.               */
-export function shortPick(db){
-  const appear = id => db.sessions.filter(s => s.log[id]).length;
-  const pool = ["pushup","pike","squat","bridge","situp","plank"]
-    .sort((a,b) => appear(a)-appear(b) || FULL.indexOf(a)-FULL.indexOf(b));
-  const first  = pool[0];
-  const second = pool.slice(1).find(x => GROUP[x] !== GROUP[first]) || pool[1];
-  return [first, "row", second];
 }
