@@ -32,19 +32,19 @@ export function chartHtml(db, sel, mode, width){
   const hi = Math.max.apply(null, all) * 1.12 || 1, lo = 0;
   const X = i => P + (W - P*1.4) * (n===1 ? .5 : i/(n-1));
   const Y = v => H - P - (H - P*1.8) * ((v-lo)/(hi-lo));
-  const cols = ["#E0A458","#7FA88B","#C6634F"];
+  const cols = ["#7ea6f2","#ededef","#9c9ca3"];  // accent, fg, muted
   let svg = '<svg width="100%" viewBox="0 0 '+W+' '+H+'" style="display:block">';
   for(let g=0; g<=2; g++){
     const y = Y(hi/1.12 * g/2);
-    svg += '<line x1="'+P+'" x2="'+(W-P*.4)+'" y1="'+y+'" y2="'+y+'" stroke="#2E3346" stroke-width="1"/>';
-    svg += '<text x="4" y="'+(y+4)+'" fill="#8A90A6" font-size="10" font-family="ui-monospace,monospace">'+
+    svg += '<line x1="'+P+'" x2="'+(W-P*.4)+'" y1="'+y+'" y2="'+y+'" stroke="#232327" stroke-width="1"/>';
+    svg += '<text x="4" y="'+(y+4)+'" fill="#9c9ca3" font-size="11" font-family="Geist Mono,ui-monospace,monospace">'+
            Math.round(hi/1.12*g/2)+'</text>';
   }
   series.forEach((s,si) => {
     svg += '<polyline fill="none" stroke="'+cols[si]+'" stroke-width="2" stroke-linejoin="round" points="'+
            s.map((v,i) => X(i)+","+Y(v)).join(" ")+'"/>';
     s.forEach((v,i) => {
-      svg += '<circle cx="'+X(i)+'" cy="'+Y(v)+'" r="3.4" fill="'+(hollow && hollow[i] ? "#14161F" : cols[si])+
+      svg += '<circle cx="'+X(i)+'" cy="'+Y(v)+'" r="3.4" fill="'+(hollow && hollow[i] ? "#0b0b0d" : cols[si])+
              '" stroke="'+cols[si]+'" stroke-width="1.6"/>';
     });
   });
@@ -54,7 +54,7 @@ export function chartHtml(db, sel, mode, width){
       const w = s.slice(Math.max(0, i-4), i+1);
       avg.push(w.reduce((a,b)=>a+b,0)/w.length);
     }
-    svg += '<polyline fill="none" stroke="#6E8CA8" stroke-width="2" stroke-dasharray="5 4" points="'+
+    svg += '<polyline fill="none" stroke="#9c9ca3" stroke-width="1.5" stroke-dasharray="5 4" points="'+
            avg.map((v,i) => X(i)+","+Y(v)).join(" ")+'"/>';
   }
   svg += '</svg>';

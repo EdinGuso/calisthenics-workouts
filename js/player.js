@@ -108,7 +108,7 @@ function runClock(target){
 /* One side of a plank set is over: switch sides, or log the weaker side. */
 function holdDone(secs){
   S.hold.push(secs);
-  if(S.side === 0){ S.side = 1; rest(REST_SIDE, "Switch sides", renderWork); }
+  if(S.side === 0){ S.side = 1; rest(REST_SIDE, "switch-sides", renderWork); }
   else {
     const v = plankSetValue(S.hold[0], S.hold[1]);
     S.hold = []; S.side = 0;
@@ -127,13 +127,13 @@ function commitSet(v){
   if(!S.log[id]) S.log[id] = [];
   S.log[id][S.set] = v;
   S.set++;
-  if(S.set < SETS){ rest(REST_SET, "Rest", renderWork); return; }
+  if(S.set < SETS){ rest(REST_SET, "rest", renderWork); return; }
   afterExercise();
 }
 function nextExercise(){
   S.i++; S.set = 0; S.side = 0; S.hold = [];
   if(S.i >= S.ids.length) finish();
-  else rest(REST_EX, "Rest", renderWork);
+  else rest(REST_EX, "rest", renderWork);
 }
 function skipExercise(){
   const id = S.ids[S.i];
@@ -225,8 +225,8 @@ function finish(){
   drawGauge(document.getElementById("d-gauge"), w.c);
   document.getElementById("d-note").textContent = w.note;
   document.getElementById("d-new").innerHTML = fresh.length
-    ? '<div class="card" style="margin-top:12px;border-color:var(--brass)">' +
-      '<p class="eyebrow" style="margin-bottom:8px;color:var(--brass)">New milestone' +
+    ? '<div class="card accent" style="margin-top:12px">' +
+      '<p class="label" style="margin-bottom:8px;color:var(--accent)">/new-milestone' +
       (fresh.length>1?"s":"") + '</p>' +
       fresh.map(m => '<div style="margin-bottom:4px">' + m.name + '</div>').join("") + '</div>'
     : "";
