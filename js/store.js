@@ -26,7 +26,7 @@ export function hasBw(db){ return typeof db.bw === "number" && db.bw > 0; }
 
 /* Export and import files. */
 export function exportJson(db){ return JSON.stringify(db,null,2); }
-export function exportName(now = new Date()){ return "ledger-" + now.toISOString().slice(0,10) + ".json"; }
+export function exportName(now = new Date()){ return "calisthenics-workouts-" + now.toISOString().slice(0,10) + ".json"; }
 
 export const OLD_FILE = "This file is from the old version";
 export const BAD_FILE = "That file did not read";

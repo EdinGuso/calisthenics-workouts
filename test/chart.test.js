@@ -34,7 +34,7 @@ test("chartData: session volume marks sessions with a skipped exercise as hollow
   assert.deepEqual(d.hollow.map((h, i) => h ? i : -1).filter(i => i >= 0), [5]);
   assert.equal(chartData(fixture(), "pushup", "total").hollow, undefined);
   const html = chartHtml(fixture(), "__vol", "total", 320);
-  assert.equal((html.match(/fill="#14161F"/g) || []).length, 1);
+  assert.equal((html.match(/fill="#0b0b0d"/g) || []).length, 1);
 });
 
 test("chartHtml: messages before there are two sessions", () => {

@@ -1,9 +1,9 @@
-/* Ledger service worker.
+/* calisthenics-workouts service worker.
    Cache first so the app opens instantly with no signal, then refresh in the
    background so an update you push lands on the next launch. Your training
    data lives in localStorage and is never touched by any of this. */
 
-const CACHE = "ledger-v2";
+const CACHE = "calisthenics-workouts-v3";
 const FILES = [
   "./",
   "./index.html",
@@ -19,6 +19,11 @@ const FILES = [
   "./js/ui.js",
   "./js/player.js",
   "./js/settings.js",
+  "./fonts/geist-400.woff2",
+  "./fonts/geist-500.woff2",
+  "./fonts/geist-600.woff2",
+  "./fonts/geist-mono-400.woff2",
+  "./fonts/geist-mono-500.woff2",
   "./manifest.webmanifest",
   "./icon-180.png",
   "./icon-192.png",

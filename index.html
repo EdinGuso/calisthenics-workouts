@@ -6,11 +6,11 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Ledger">
-<meta name="theme-color" content="#14161F">
+<meta name="apple-mobile-web-app-title" content="workouts">
+<meta name="theme-color" content="#0b0b0d">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
-<title>Ledger</title>
+<title>calisthenics-workouts</title>
 <link rel="stylesheet" href="css/app.css">
 </head>
 <body>
@@ -18,10 +18,11 @@
 
 <!-- ============ HOME ============ -->
 <section id="s-home" class="screen on">
-  <p class="eyebrow" id="home-date"></p>
+  <div class="crumb"><span><b>cw</b>/this-week</span></div>
   <h1>This week</h1>
+  <p class="date" id="home-date"></p>
 
-  <div class="card" id="bw-ask" style="display:none;border-color:var(--brass)">
+  <div class="card" id="bw-ask" style="display:none;border-color:var(--accent)">
     <div class="metalab">Your bodyweight in kg</div>
     <p class="small dim" style="margin:6px 0 10px">Used only to estimate the load you move. You can change it in Settings.</p>
     <input class="plain" id="bw-ask-in" type="number" inputmode="decimal" placeholder="kg">
@@ -43,7 +44,7 @@
     <div class="card"><div class="metanum" id="m-total">0</div><div class="metalab">Sessions</div></div>
   </div>
 
-  <h2>Planned days</h2>
+  <h2 class="label">/planned-days</h2>
   <p class="small dim" style="margin-top:-6px">Tap to plan. Move them whenever you like, nothing is lost.</p>
   <div class="card">
     <div class="days" id="daychips"></div>
@@ -54,15 +55,15 @@
   </div>
 
   <div class="navrow">
-    <button data-go="s-stats">Progress</button>
-    <button data-go="s-ach">Milestones</button>
-    <button data-go="s-set">Settings</button>
+    <button data-go="s-stats">/progress</button>
+    <button data-go="s-ach">/milestones</button>
+    <button data-go="s-set">/settings</button>
   </div>
 </section>
 
 <!-- ============ WARM-UP ============ -->
 <section id="s-warm" class="screen">
-  <p class="eyebrow">Warm-up</p>
+  <div class="crumb"><span><b>cw</b>/warm-up</span></div>
   <div class="timerwrap">
     <div class="bigtime rest" id="wu-time">0:45</div>
   </div>
@@ -111,14 +112,14 @@
 
 <!-- ============ REST ============ -->
 <section id="s-rest" class="screen">
-  <p class="eyebrow" id="r-label">Rest</p>
+  <div class="crumb"><span><b>cw</b>/<span id="r-label">rest</span></span></div>
   <div class="timerwrap" style="padding-top:30px">
     <svg class="ring" id="r-ring" width="220" height="220" viewBox="0 0 220 220">
-      <circle cx="110" cy="110" r="98" fill="none" stroke="#2E3346" stroke-width="8"/>
-      <circle id="r-arc" cx="110" cy="110" r="98" fill="none" stroke="#6E8CA8" stroke-width="8"
+      <circle class="track" cx="110" cy="110" r="98" fill="none" stroke="#232327" stroke-width="6"/>
+      <circle class="arc" id="r-arc" cx="110" cy="110" r="98" fill="none" stroke="#7ea6f2" stroke-width="6"
               stroke-linecap="round" transform="rotate(-90 110 110)"/>
       <text id="r-text" x="110" y="110" text-anchor="middle" dominant-baseline="central"
-            fill="#E8E6E1" font-family="ui-rounded, system-ui" font-size="62" font-weight="700">20</text>
+            fill="#ededef" font-size="64" font-weight="600">20</text>
     </svg>
   </div>
   <div class="nextup" id="r-next"></div>
@@ -131,7 +132,7 @@
 
 <!-- ============ FEEDBACK ============ -->
 <section id="s-fb" class="screen">
-  <p class="eyebrow">One question</p>
+  <div class="crumb"><span><b>cw</b>/one-question</span></div>
   <h1 id="fb-name"></h1>
   <p class="dim" id="fb-q">How did that feel at the target?</p>
   <div class="fb">
@@ -143,7 +144,7 @@
 
 <!-- ============ DONE ============ -->
 <section id="s-done" class="screen">
-  <p class="eyebrow">Logged</p>
+  <div class="crumb"><span><b>cw</b>/logged</span></div>
   <h1 id="d-title">Session banked</h1>
   <div class="card">
     <div class="weekline">
@@ -155,7 +156,7 @@
   </div>
   <div id="d-new"></div>
   <div class="card" style="margin-top:12px">
-    <p class="eyebrow" style="margin-bottom:6px">Breakfast, if you want one</p>
+    <p class="label" style="margin-bottom:6px">/breakfast-if-you-want-one</p>
     <div id="d-food"></div>
   </div>
   <button class="btn btn-primary" data-go="s-home" style="margin-top:20px">Done</button>
@@ -163,7 +164,7 @@
 
 <!-- ============ STATS ============ -->
 <section id="s-stats" class="screen">
-  <p class="eyebrow">Progress</p>
+  <div class="crumb"><span><b>cw</b>/progress</span><button class="cd" data-go="s-home">cd ..</button></div>
   <h1>The numbers</h1>
   <div class="chips" id="st-chips"></div>
   <div class="card">
@@ -174,12 +175,11 @@
     <button class="btn" id="st-mode">Show by set</button>
   </div>
   <div class="card" style="margin-top:12px" id="st-summary"></div>
-  <div class="navrow"><button data-go="s-home">Back</button></div>
 </section>
 
 <!-- ============ ACHIEVEMENTS ============ -->
 <section id="s-ach" class="screen">
-  <p class="eyebrow">Milestones</p>
+  <div class="crumb"><span><b>cw</b>/milestones</span><button class="cd" data-go="s-home">cd ..</button></div>
   <h1>Nothing here can be lost</h1>
   <div class="card" style="margin-top:14px">
     <div class="metalab">Total load moved</div>
@@ -187,27 +187,26 @@
     <div class="small dim" id="a-tonnage-note"></div>
   </div>
   <div id="a-list"></div>
-  <div class="navrow"><button data-go="s-home">Back</button></div>
 </section>
 
 <!-- ============ SETTINGS ============ -->
 <section id="s-set" class="screen">
-  <p class="eyebrow">Settings</p>
+  <div class="crumb"><span><b>cw</b>/settings</span><button class="cd" data-go="s-home">cd ..</button></div>
   <h1>Housekeeping</h1>
 
-  <h2>Bodyweight</h2>
+  <h2 class="label">/bodyweight</h2>
   <p class="small dim" style="margin-top:-6px">Used only to work out load moved.</p>
   <input class="plain" id="cfg-bw" type="number" inputmode="decimal" placeholder="kg">
 
-  <h2>Side plank hold</h2>
+  <h2 class="label">/side-plank-hold</h2>
   <p class="small dim" style="margin-top:-6px">Seconds per side, every set.</p>
-  <div class="stepper">
+  <div class="stepper sm">
     <button id="cfg-plank-minus">−</button>
     <input id="cfg-plank" type="number" readonly value="30">
     <button id="cfg-plank-plus">+</button>
   </div>
 
-  <h2>Your data</h2>
+  <h2 class="label">/your-data</h2>
   <p class="small dim" style="margin-top:-6px">Everything lives on this phone only. Export now and then.</p>
   <div class="stack">
     <button class="btn" id="cfg-export">Export to a file</button>
@@ -215,15 +214,14 @@
     <input type="file" id="cfg-file" accept="application/json" style="display:none">
   </div>
 
-  <h2>Storage</h2>
+  <h2 class="label">/storage</h2>
   <p class="small dim" id="cfg-persist">Checking…</p>
 
-  <h2>Start again</h2>
+  <h2 class="label">/start-again</h2>
   <div class="stack">
     <button class="btn btn-ghost" id="cfg-reset">Erase everything</button>
   </div>
 
-  <div class="navrow"><button data-go="s-home">Back</button></div>
 </section>
 
 </div>

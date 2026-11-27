@@ -63,8 +63,7 @@ function paintStats(){
   document.getElementById("st-summary").innerHTML = sum;
 }
 function row(a,b){
-  return '<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--line)">'+
-         '<span class="dim small">'+a+'</span><span class="small" style="font-family:var(--mono)">'+b+'</span></div>';
+  return '<div class="statrow"><span class="dim small">'+a+'</span><span>'+b+'</span></div>';
 }
 
 /* ============================================================
@@ -122,10 +121,10 @@ function paintAch(){
     '<span class="nm">'+m.name+'<small>'+m.sub+'</small>'+
     (m.got||m.na?"":'<span class="bar"><i style="width:'+(m.p*100)+'%"></i></span>')+'</span></div>';
   document.getElementById("a-list").innerHTML =
-    '<h2>Coming up</h2><div class="card">' +
+    '<h2 class="label">/coming-up</h2><div class="card">' +
       (near.length ? near.map(render).join("") : '<p class="dim small" style="margin:0">All done.</p>') +
     '</div>' +
-    '<h2>Earned <span class="pill">'+got.length+'</span></h2><div class="card">' +
+    '<h2 class="label">/earned <span class="pill">'+got.length+'</span></h2><div class="card">' +
       (got.length ? got.reverse().map(render).join("") :
         '<p class="dim small" style="margin:0">Nothing yet. The first one is one session away.</p>') +
     '</div>';

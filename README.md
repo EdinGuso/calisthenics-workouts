@@ -1,6 +1,6 @@
-# Ledger
+# calisthenics-workouts
 
-Ledger is a small training log for a fixed bodyweight programme. It runs in the browser as a
+A small training log for a fixed bodyweight programme. It runs in the browser as a
 progressive web app, works offline once loaded, and keeps all data on the device.
 
 It guides a session from warm-up to the last set: timed warm-up moves, a target for every set,
@@ -9,7 +9,15 @@ worked out from that log.
 
 ## Screenshots
 
-To be added.
+Synthetic demo data, 375 x 812.
+
+<p>
+  <img src="docs/screenshots/home.png" width="180" alt="Home: this week's sessions, streak and planned days">
+  <img src="docs/screenshots/work.png" width="180" alt="A set with its target and the rep stepper">
+  <img src="docs/screenshots/rest.png" width="180" alt="Rest countdown">
+  <img src="docs/screenshots/progress.png" width="180" alt="Progress chart for one exercise">
+  <img src="docs/screenshots/milestones.png" width="180" alt="Milestones and load moved">
+</p>
 
 ## Design
 
@@ -75,6 +83,7 @@ targets, lifetime totals, milestones and chart output, using synthetic data in
 ```
 index.html             markup for every screen
 css/app.css            styles
+fonts/                 Geist and Geist Mono (latin subset, SIL OFL 1.1)
 js/main.js             entry point: loads data, wires screens, registers the service worker
 js/config.js           exercises, timings, warm-up, food suggestions, milestone tiers
 js/store.js            localStorage load and save, export and import
@@ -88,6 +97,7 @@ js/player.js           session flow: warm-up, sets, rests, feedback, finish
 js/settings.js         settings screen and the bodyweight question
 sw.js                  service worker (offline cache)
 manifest.webmanifest   home-screen install
+docs/screenshots/      README screenshots (synthetic data)
 test/                  node --test tests and synthetic fixtures
 ```
 
