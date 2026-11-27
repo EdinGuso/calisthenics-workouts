@@ -25,7 +25,16 @@ test("chartData: session volume counts reps across exercises, not seconds", () =
   const d = chartData(fixture(), "__vol", "total");
   assert.equal(d.series.length, 1);
   assert.equal(d.series[0][0], 18 + 12 + 30 + 12 + 29 + 37);
-  assert.equal(d.series[0][5], 22 + 0 + 35 + 13 + 29 + 42);
+  assert.equal(d.series[0][5], 22 + 35 + 13 + 29 + 42);
+});
+
+test("chartData: session volume marks sessions with a skipped exercise as hollow", () => {
+  const d = chartData(fixture(), "__vol", "total");
+  assert.equal(d.hollow.length, 19);
+  assert.deepEqual(d.hollow.map((h, i) => h ? i : -1).filter(i => i >= 0), [5]);
+  assert.equal(chartData(fixture(), "pushup", "total").hollow, undefined);
+  const html = chartHtml(fixture(), "__vol", "total", 320);
+  assert.equal((html.match(/fill="#14161F"/g) || []).length, 1);
 });
 
 test("chartHtml: messages before there are two sessions", () => {

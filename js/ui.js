@@ -40,6 +40,7 @@ function paintStats(){
   });
   const btn = document.getElementById("st-mode");
   btn.style.display = stSel === "__vol" ? "none" : "block";
+  document.getElementById("st-skiplegend").style.display = stSel === "__vol" ? "" : "none";
   btn.textContent = stMode === "total" ? "Show by set" : "Show total";
   chart();
 
@@ -139,7 +140,10 @@ export function show(id){
   if(id === "s-stats") paintStats();
   if(id === "s-ach") paintAch();
   if(id === "s-home") paintHome();
-  if(id === "s-set") document.getElementById("cfg-bw").value = hasBw(store.db) ? store.db.bw : "";
+  if(id === "s-set"){
+    document.getElementById("cfg-bw").value = hasBw(store.db) ? store.db.bw : "";
+    document.getElementById("cfg-plank").value = store.db.targets.plank;
+  }
 }
 export function mmss(s){ return Math.floor(s/60) + ":" + String(s%60).padStart(2,"0"); }
 let tt = null;

@@ -2,12 +2,14 @@
 import { EX, FULL, SETS, REST_SET, REST_EX, REST_SIDE, WARMUP, FOOD } from "./config.js";
 import { store, newSession } from "./store.js";
 import { weekState } from "./weeks.js";
-import { targetFor, updateCap } from "./targets.js";
+import { targetFor, needsFeedback, nextBridgeTarget, holdSeconds, plankSetValue } from "./targets.js";
 import { milestones } from "./milestones.js";
 import { beep, ding, click } from "./audio.js";
-import { save, show, paintHome, drawGauge, creditHtml, mmss } from "./ui.js";
+import { save, show, paintHome, drawGauge, creditHtml, mmss, toast } from "./ui.js";
 
-let S = null;   // {ids, i, set, log, side, t0, timer}
+/* S = {ids, i, set, log, side, wi, hold, fb, tick}. log holds only exercises that were
+   done; a skipped exercise has no key. fb is the bridge feedback, applied at finish. */
+let S = null;
 
 let wake = null;
 async function keepAwake(on){
@@ -18,8 +20,7 @@ async function keepAwake(on){
 }
 
 export function start(){
-  S = { ids: FULL.slice(), i:0, set:0, log:{}, side:0, wi:0 };
-  FULL.forEach(id => { S.log[id] = []; });
+  S = { ids: FULL.slice(), i:0, set:0, log:{}, side:0, wi:0, hold:[], fb:null };
   keepAwake(true);
   warmStart();
 }
@@ -63,6 +64,7 @@ function renderWork(){
     [0,1,2].map(n => '<span class="pip '+(n<S.set?"past":(n===S.set?"on":""))+'"></span>').join("");
   document.getElementById("w-name").textContent = e.name;
   document.getElementById("w-cue").textContent = e.cue;
+  document.getElementById("w-skip").style.display = S.set === 0 && S.side === 0 ? "block" : "none";
 
   const t = targetFor(store.db, id, S.set);
   const timed = e.unit === "secs";
@@ -71,7 +73,7 @@ function renderWork(){
 
   if(timed){
     document.getElementById("w-side").textContent = S.side === 0 ? "Left side" : "Right side";
-    document.getElementById("w-tgtline").textContent = t ? ("Target " + t + " s") : "No target yet, just hold";
+    document.getElementById("w-tgtline").textContent = "Hold " + t + " s";
     runClock(t);
   } else {
     const label = e.sides === 2 ? "per leg" : "reps";
@@ -82,14 +84,27 @@ function renderWork(){
     setVal(t == null ? 10 : t);
   }
 }
+/* Counts down from the target and logs it at zero. Never logs more than the target. */
 function runClock(target){
   const el = document.getElementById("w-clock");
-  let n = 0; el.textContent = "0:00"; el.className = "bigtime";
+  let n = 0; el.textContent = mmss(target); el.className = "bigtime";
   clk = setInterval(() => {
-    n++; el.textContent = mmss(n);
-    if(target && n === target){ ding(); el.className = "bigtime past"; }
+    n++; el.textContent = mmss(target - n);
+    const left = target - n;
+    if(left <= 3 && left > 0) beep(520,80,.15);
+    if(left <= 0){ clearInterval(clk); ding(); holdDone(holdSeconds(n, target)); }
   }, 1000);
-  S.t0 = 0; S.tick = () => n;
+  S.tick = () => holdSeconds(n, target);
+}
+/* One side of a plank set is over: switch sides, or log the weaker side. */
+function holdDone(secs){
+  S.hold.push(secs);
+  if(S.side === 0){ S.side = 1; rest(REST_SIDE, "Switch sides", renderWork); }
+  else {
+    const v = plankSetValue(S.hold[0], S.hold[1]);
+    S.hold = []; S.side = 0;
+    commitSet(v);
+  }
 }
 
 function setVal(v){
@@ -100,33 +115,37 @@ function setVal(v){
 
 function commitSet(v){
   const id = S.ids[S.i];
+  if(!S.log[id]) S.log[id] = [];
   S.log[id][S.set] = v;
   S.set++;
   if(S.set < SETS){ rest(REST_SET, "Rest", renderWork); return; }
   afterExercise();
 }
+function nextExercise(){
+  S.i++; S.set = 0; S.side = 0; S.hold = [];
+  if(S.i >= S.ids.length) finish();
+  else rest(REST_EX, "Rest", renderWork);
+}
+function skipExercise(){
+  const id = S.ids[S.i];
+  if(!confirm("Skip " + EX[id].name.toLowerCase() + " today? Nothing is logged for it.")) return;
+  clearInterval(clk); click();
+  delete S.log[id];
+  if(id === "bridge") S.fb = null;
+  nextExercise();
+}
 function afterExercise(){
-  const DB = store.db;
   const id = S.ids[S.i], e = EX[id];
-  const needFb = e.mode === "capped" && DB.caps[id] != null &&
-                 Math.min.apply(null, S.log[id]) >= DB.caps[id];
-  const go = () => {
-    S.i++; S.set = 0;
-    if(S.i >= S.ids.length) finish();
-    else rest(REST_EX, "Rest", renderWork);
-  };
-  if(needFb){
+  if(id === "bridge") S.fb = null;
+  if(needsFeedback(store.db, id, S.log[id])){
     show("s-fb");
     document.getElementById("fb-name").textContent = e.name;
     document.getElementById("fb-q").textContent =
       "You held the target every set. How did that feel?";
     document.querySelectorAll("[data-fb]").forEach(b => b.onclick = () => {
-      click(); updateCap(store.db, id, S.log[id], b.dataset.fb); save(); go();
+      click(); S.fb = b.dataset.fb; nextExercise();
     });
-  } else {
-    if(e.mode === "capped"){ updateCap(DB, id, S.log[id], null); save(); }
-    go();
-  }
+  } else nextExercise();
 }
 
 /* ---- rest ---- */
@@ -159,9 +178,12 @@ function rest(secs, label, done){
   };
   document.getElementById("r-undo").onclick = () => {
     clearInterval(rt);
-    if(S.hold && S.hold.length){ S.hold = []; S.side = 0; }   // mid-set, just redo the set
+    if(S.hold.length){ S.hold = []; S.side = 0; }   // mid-set, just redo the set
     else if(S.set > 0){ S.set--; }
-    else if(S.i > 0){ S.i--; S.set = SETS-1; }
+    else if(S.i > 0){
+      S.i--;
+      S.set = S.log[S.ids[S.i]] ? SETS-1 : 0;          // a skipped exercise starts again
+    }
     renderWork();
   };
 }
@@ -170,6 +192,11 @@ function rest(secs, label, done){
 function finish(){
   const DB = store.db;
   clearInterval(rt); clearInterval(clk); endSession();
+  if(!Object.keys(S.log).length){
+    S = null; show("s-home"); toast("Every exercise skipped. Nothing saved.");
+    return;
+  }
+  if(S.log.bridge) DB.targets.bridge = nextBridgeTarget(DB, S.log.bridge, S.fb);
   const before = milestones(DB);
   const sess = newSession(Date.now(), S.log);
   DB.sessions.push(sess);
@@ -205,15 +232,9 @@ export function initPlayer(){
   document.getElementById("wu-skip").onclick = () => { clearInterval(wuTimer); workStart(); };
   document.getElementById("w-stop").onclick = () => {
     const n = S.tick(); clearInterval(clk); click();
-    S.hold = S.hold || [];
-    S.hold.push(n);
-    if(S.side === 0){ S.side = 1; rest(REST_SIDE, "Switch sides", () => renderWork()); }
-    else {
-      const v = Math.min(S.hold[0], S.hold[1]);
-      S.hold = []; S.side = 0;
-      commitSet(v);
-    }
+    holdDone(n);
   };
+  document.getElementById("w-skip").onclick = skipExercise;
   document.getElementById("w-minus").onclick = () => { click(); setVal((+document.getElementById("w-val").value||0)-1); };
   document.getElementById("w-plus").onclick  = () => { click(); setVal((+document.getElementById("w-val").value||0)+1); };
   document.getElementById("w-val").oninput   = e => {

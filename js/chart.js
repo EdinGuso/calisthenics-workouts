@@ -1,25 +1,27 @@
 /* Progress chart as an SVG string. No DOM access. */
-import { EX } from "./config.js";
+import { EX, FULL } from "./config.js";
 import { history } from "./targets.js";
 
-/* sel is an exercise id or "__vol" for session volume; mode is "total" or "sets". */
+/* sel is an exercise id or "__vol" for session volume; mode is "total" or "sets".
+   hollow[i] is true for a session-volume point where an exercise was skipped. */
 export function chartData(db, sel, mode){
-  let series;
+  let series, hollow = null;
   if(sel === "__vol"){
     series = [db.sessions.map(s => Object.keys(s.log).reduce((a,k) =>
       a + s.log[k].reduce((p,q)=>p+q,0) * (EX[k].unit==="secs"?0:1), 0))];
+    hollow = db.sessions.map(s => FULL.some(id => !s.log[id]));
   } else {
     const h = history(db, sel);
     series = mode === "total"
       ? [h.map(x => x.vals.reduce((a,b)=>a+b,0))]
       : [0,1,2].map(i => h.map(x => x.vals[i] || 0));
   }
-  return {series};
+  return hollow ? {series, hollow} : {series};
 }
 
 /* width is the container's width in pixels (0 if unknown). */
 export function chartHtml(db, sel, mode, width){
-  const {series} = chartData(db, sel, mode);
+  const {series, hollow} = chartData(db, sel, mode);
   const n = series[0].length;
   if(n < 2){
     return '<p class="dim small" style="margin:26px 0;text-align:center">' +
@@ -42,7 +44,7 @@ export function chartHtml(db, sel, mode, width){
     svg += '<polyline fill="none" stroke="'+cols[si]+'" stroke-width="2" stroke-linejoin="round" points="'+
            s.map((v,i) => X(i)+","+Y(v)).join(" ")+'"/>';
     s.forEach((v,i) => {
-      svg += '<circle cx="'+X(i)+'" cy="'+Y(v)+'" r="3.4" fill="'+cols[si]+
+      svg += '<circle cx="'+X(i)+'" cy="'+Y(v)+'" r="3.4" fill="'+(hollow && hollow[i] ? "#14161F" : cols[si])+
              '" stroke="'+cols[si]+'" stroke-width="1.6"/>';
     });
   });
