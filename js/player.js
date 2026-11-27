@@ -1,13 +1,13 @@
 /* Session flow: warm-up, sets, rests, feedback and the finish screen. */
 import { EX, FULL, SETS, REST_SET, REST_EX, REST_SIDE, WARMUP, FOOD } from "./config.js";
-import { store } from "./store.js";
+import { store, newSession } from "./store.js";
 import { weekState } from "./weeks.js";
-import { targetFor, updateCap, shortPick } from "./targets.js";
+import { targetFor, updateCap } from "./targets.js";
 import { milestones } from "./milestones.js";
 import { beep, ding, click } from "./audio.js";
-import { save, show, paintHome, drawGauge, mmss } from "./ui.js";
+import { save, show, paintHome, drawGauge, creditHtml, mmss } from "./ui.js";
 
-let S = null;   // {type, ids, i, set, log, side, t0, timer}
+let S = null;   // {ids, i, set, log, side, t0, timer}
 
 let wake = null;
 async function keepAwake(on){
@@ -17,10 +17,9 @@ async function keepAwake(on){
   }catch(e){}
 }
 
-export function start(type){
-  S = { type, ids: type === "full" ? FULL.slice() : shortPick(store.db),
-        i:0, set:0, log:{}, side:0, wi:0 };
-  FULL.forEach(id => { if(S.ids.includes(id)) S.log[id] = []; });
+export function start(){
+  S = { ids: FULL.slice(), i:0, set:0, log:{}, side:0, wi:0 };
+  FULL.forEach(id => { S.log[id] = []; });
   keepAwake(true);
   warmStart();
 }
@@ -172,8 +171,7 @@ function finish(){
   const DB = store.db;
   clearInterval(rt); clearInterval(clk); endSession();
   const before = milestones(DB);
-  const sess = { id: Date.now(), ts: Date.now(), type: S.type,
-                 credit: S.type === "full" ? 1 : 0.5, log: S.log };
+  const sess = newSession(Date.now(), S.log);
   DB.sessions.push(sess);
   DB.sessions.sort((a,b) => a.ts - b.ts);
   save();
@@ -182,8 +180,8 @@ function finish(){
 
   const w = weekState(DB);
   document.getElementById("d-title").textContent =
-    w.need === 0 ? "Week banked" : "Logged. " + w.need.toFixed(1) + " to go.";
-  document.getElementById("d-credit").innerHTML = w.c.toFixed(1) + "<span>/2.0</span>";
+    w.need === 0 ? "Week banked" : "Logged. " + w.need + (w.need === 1 ? " session" : " sessions") + " to go.";
+  document.getElementById("d-credit").innerHTML = creditHtml(w.c);
   const ds = document.getElementById("d-status");
   ds.className = "status " + w.cls; ds.textContent = w.txt;
   drawGauge(document.getElementById("d-gauge"), w.c);

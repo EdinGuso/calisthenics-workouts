@@ -2,26 +2,24 @@
 import { EX, FULL, TON_TIERS } from "./config.js";
 import { store, write, hasBw } from "./store.js";
 import { weekKey, chain, weekState } from "./weeks.js";
-import { history, targetFor, shortPick } from "./targets.js";
+import { history, targetFor } from "./targets.js";
 import { lifetime, tonnage, milestones } from "./milestones.js";
 import { chartHtml } from "./chart.js";
 import { click } from "./audio.js";
 
 export function save(){ if(!write(store.db)) toast("Could not save"); }
 
+/* Two slots, one per session this week. */
 export function drawGauge(el, c){
   el.innerHTML = "";
   for(let i=0;i<2;i++){
-    const filled = Math.max(0, Math.min(2, c*2 - i*2)); // halves filled in this slot: 0,1,2
     const slot = document.createElement("div");
-    slot.className = "slot" + (c>=2 ? " done" : "");
-    slot.innerHTML =
-      '<div class="half'+(filled>=1?" fill":"")+'"></div>' +
-      '<div class="half'+(filled>=2?" fill":"")+'"></div>' +
-      '<span class="tag">'+(i===0?"1.0":"2.0")+'</span>';
+    slot.className = "slot" + (c>i ? " fill" : "") + (c>=2 ? " done" : "");
+    slot.innerHTML = '<span class="tag">'+(i+1)+'</span>';
     el.appendChild(slot);
   }
 }
+export function creditHtml(c){ return c + "<span> / 2 sessions</span>"; }
 
 /* ============================================================
    STATS
@@ -59,8 +57,6 @@ function paintStats(){
   } else {
     const c = chain(DB);
     sum = row("Sessions", DB.sessions.length) +
-          row("Full / short", DB.sessions.filter(s=>s.type==="full").length + " / " +
-                              DB.sessions.filter(s=>s.type==="short").length) +
           row("Weeks banked", c.banked) + row("Current streak", c.streak);
   }
   document.getElementById("st-summary").innerHTML = sum;
@@ -79,7 +75,7 @@ export function paintHome(){
   document.getElementById("home-date").textContent =
     now.toLocaleDateString("en-GB", {weekday:"long", day:"numeric", month:"long"});
   const w = weekState(DB), c = chain(DB);
-  document.getElementById("wk-credit").innerHTML = w.c.toFixed(1) + "<span>/2.0</span>";
+  document.getElementById("wk-credit").innerHTML = creditHtml(w.c);
   const st = document.getElementById("wk-status");
   st.className = "status " + w.cls; st.textContent = w.txt;
   drawGauge(document.getElementById("wk-gauge"), w.c);
@@ -104,10 +100,6 @@ export function paintHome(){
     store.db.commits[key] = cur.includes(n) ? cur.filter(x => x !== n) : cur.concat(n).sort();
     save(); paintHome(); click();
   });
-
-  const p = shortPick(DB).map(id => EX[id].name.toLowerCase()).join(", ");
-  document.getElementById("short-sub").textContent =
-    "Warm-up, then " + p + ". About 13 minutes.";
 }
 function paintAch(){
   const kg = tonnage(store.db);

@@ -3,6 +3,7 @@
 process.env.TZ = "Europe/Zurich";
 
 import fs from "node:fs";
+import { newSession } from "../js/store.js";
 
 const FIXTURES = new URL("./fixtures/", import.meta.url);
 
@@ -19,7 +20,7 @@ export function at(y, mo, d, h = 12, mi = 0) {
 /** A full session at a local date with the given log. */
 export function session(date, log = {}) {
   const ts = date.getTime();
-  return { id: ts, ts, type: "full", credit: 1, log };
+  return newSession(ts, log);
 }
 
 /** A database with just these sessions. */

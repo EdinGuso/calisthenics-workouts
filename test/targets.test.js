@@ -10,7 +10,7 @@ test("history: chronological entries for one exercise, skipping sessions without
     session(at(2026, 3, 6, 7), { pushup: [6, 5, 4] })
   ]);
   assert.deepEqual(history(db, "pushup").map(h => h.vals), [[5, 4, 3], [6, 5, 4]]);
-  assert.deepEqual(history(db, "pushup")[0], { ts: db.sessions[0].ts, type: "full", vals: [5, 4, 3] });
+  assert.deepEqual(history(db, "pushup")[0], { ts: db.sessions[0].ts, vals: [5, 4, 3] });
 });
 
 test("targetFor (failure): no history means no target", () => {
