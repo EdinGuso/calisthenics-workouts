@@ -5,9 +5,12 @@ Pages from `main`. All data lives in the browser's `localStorage`; there is no b
 
 ## Files
 
-- `index.html`: the whole app (markup, styles, script).
-- `sw.js`: service worker, stale-while-revalidate cache of the files below.
+- `index.html`: markup; `css/app.css`: styles; `js/`: ES modules, entry point `js/main.js`.
+  `weeks`, `targets`, `milestones`, `chart` and `config` hold the logic and never touch the DOM.
+- `sw.js`: service worker, stale-while-revalidate cache of every served file (`FILES`).
 - `manifest.webmanifest`, `icon-*.png`: home-screen install.
+- `test/`: `node --test "test/*.test.js"` (or `npm test`), synthetic fixtures only. CI runs it on
+  every push and pull request.
 
 ## Workflow
 
