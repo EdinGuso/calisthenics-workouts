@@ -105,6 +105,7 @@ js/player.js           session flow: warm-up, sets, rests, feedback, finish
 js/settings.js         settings screen and the bodyweight question
 sw.js                  service worker (offline cache)
 manifest.webmanifest   home-screen install
+icons/                 home-screen icons
 docs/screenshots/      README screenshots (synthetic data)
 test/                  node --test tests and synthetic fixtures
 ```

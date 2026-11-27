@@ -3,7 +3,7 @@
    background so an update you push lands on the next launch. Your training
    data lives in localStorage and is never touched by any of this. */
 
-const CACHE = "calisthenics-workouts-v3";
+const CACHE = "calisthenics-workouts-v4";
 const FILES = [
   "./",
   "./index.html",
@@ -25,9 +25,9 @@ const FILES = [
   "./fonts/geist-mono-400.woff2",
   "./fonts/geist-mono-500.woff2",
   "./manifest.webmanifest",
-  "./icon-180.png",
-  "./icon-192.png",
-  "./icon-512.png"
+  "./icons/icon-180.png",
+  "./icons/icon-192.png",
+  "./icons/icon-512.png"
 ];
 
 self.addEventListener("install", e => {
