@@ -11,11 +11,20 @@ import { save, show, paintHome, drawGauge, creditHtml, mmss, toast } from "./ui.
    done; a skipped exercise has no key. fb is the bridge feedback, applied at finish. */
 let S = null;
 
-let wake = null;
+/* The browser drops the lock by itself when the app is hidden; the "release" listener notices,
+   so visibilitychange can take it again. A lock that arrives after the session ended is let go. */
+let wake = null, asking = false;
 async function keepAwake(on){
   try{
-    if(on && "wakeLock" in navigator){ wake = await navigator.wakeLock.request("screen"); }
-    else if(wake){ await wake.release(); wake = null; }
+    if(on && "wakeLock" in navigator){
+      if(wake || asking) return;
+      asking = true;
+      const lock = await navigator.wakeLock.request("screen").finally(() => { asking = false; });
+      if(!S){ await lock.release(); return; }
+      wake = lock;
+      lock.addEventListener("release", () => { if(wake === lock) wake = null; });
+    }
+    else if(wake){ const lock = wake; wake = null; await lock.release(); }
   }catch(e){}
 }
 
