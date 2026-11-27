@@ -1,9 +1,9 @@
-/* workouts service worker.
+/* calisthenics-workouts service worker.
    Cache first so the app opens instantly with no signal, then refresh in the
    background so an update you push lands on the next launch. Your training
    data lives in localStorage and is never touched by any of this. */
 
-const CACHE = "workouts-v3";
+const CACHE = "calisthenics-workouts-v3";
 const FILES = [
   "./",
   "./index.html",

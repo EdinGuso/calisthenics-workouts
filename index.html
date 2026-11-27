@@ -10,9 +10,7 @@
 <meta name="theme-color" content="#0b0b0d">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
-<title>workouts</title>
-<link rel="preload" href="fonts/geist-400.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="fonts/geist-mono-400.woff2" as="font" type="font/woff2" crossorigin>
+<title>calisthenics-workouts</title>
 <link rel="stylesheet" href="css/app.css">
 </head>
 <body>
@@ -20,7 +18,7 @@
 
 <!-- ============ HOME ============ -->
 <section id="s-home" class="screen on">
-  <div class="crumb"><span class="path"><span class="app">workouts</span><span class="sub">/this-week</span></span></div>
+  <div class="crumb"><span><b>cw</b>/this-week</span></div>
   <h1>This week</h1>
   <p class="date" id="home-date"></p>
 
@@ -65,7 +63,7 @@
 
 <!-- ============ WARM-UP ============ -->
 <section id="s-warm" class="screen">
-  <div class="crumb"><span class="path"><span class="app">workouts</span><span class="sub">/warm-up</span></span></div>
+  <div class="crumb"><span><b>cw</b>/warm-up</span></div>
   <div class="timerwrap">
     <div class="bigtime rest" id="wu-time">0:45</div>
   </div>
@@ -114,7 +112,7 @@
 
 <!-- ============ REST ============ -->
 <section id="s-rest" class="screen">
-  <div class="crumb"><span class="path"><span class="app">workouts</span><span class="sub">/<span id="r-label">rest</span></span></span></div>
+  <div class="crumb"><span><b>cw</b>/<span id="r-label">rest</span></span></div>
   <div class="timerwrap" style="padding-top:30px">
     <svg class="ring" id="r-ring" width="220" height="220" viewBox="0 0 220 220">
       <circle class="track" cx="110" cy="110" r="98" fill="none" stroke="#232327" stroke-width="6"/>
@@ -134,7 +132,7 @@
 
 <!-- ============ FEEDBACK ============ -->
 <section id="s-fb" class="screen">
-  <div class="crumb"><span class="path"><span class="app">workouts</span><span class="sub">/one-question</span></span></div>
+  <div class="crumb"><span><b>cw</b>/one-question</span></div>
   <h1 id="fb-name"></h1>
   <p class="dim" id="fb-q">How did that feel at the target?</p>
   <div class="fb">
@@ -146,7 +144,7 @@
 
 <!-- ============ DONE ============ -->
 <section id="s-done" class="screen">
-  <div class="crumb"><span class="path"><span class="app">workouts</span><span class="sub">/logged</span></span></div>
+  <div class="crumb"><span><b>cw</b>/logged</span></div>
   <h1 id="d-title">Session banked</h1>
   <div class="card">
     <div class="weekline">
@@ -166,7 +164,7 @@
 
 <!-- ============ STATS ============ -->
 <section id="s-stats" class="screen">
-  <div class="crumb"><span class="path"><span class="app">workouts</span><span class="sub">/progress</span></span><button class="cd" data-go="s-home">cd ..</button></div>
+  <div class="crumb"><span><b>cw</b>/progress</span><button class="cd" data-go="s-home">cd ..</button></div>
   <h1>The numbers</h1>
   <div class="chips" id="st-chips"></div>
   <div class="card">
@@ -177,12 +175,11 @@
     <button class="btn" id="st-mode">Show by set</button>
   </div>
   <div class="card" style="margin-top:12px" id="st-summary"></div>
-  <button class="cd cd-foot" data-go="s-home">cd ..</button>
 </section>
 
 <!-- ============ ACHIEVEMENTS ============ -->
 <section id="s-ach" class="screen">
-  <div class="crumb"><span class="path"><span class="app">workouts</span><span class="sub">/milestones</span></span><button class="cd" data-go="s-home">cd ..</button></div>
+  <div class="crumb"><span><b>cw</b>/milestones</span><button class="cd" data-go="s-home">cd ..</button></div>
   <h1>Nothing here can be lost</h1>
   <div class="card" style="margin-top:14px">
     <div class="metalab">Total load moved</div>
@@ -190,12 +187,11 @@
     <div class="small dim" id="a-tonnage-note"></div>
   </div>
   <div id="a-list"></div>
-  <button class="cd cd-foot" data-go="s-home">cd ..</button>
 </section>
 
 <!-- ============ SETTINGS ============ -->
 <section id="s-set" class="screen">
-  <div class="crumb"><span class="path"><span class="app">workouts</span><span class="sub">/settings</span></span><button class="cd" data-go="s-home">cd ..</button></div>
+  <div class="crumb"><span><b>cw</b>/settings</span><button class="cd" data-go="s-home">cd ..</button></div>
   <h1>Housekeeping</h1>
 
   <h2 class="label">/bodyweight</h2>
@@ -226,7 +222,6 @@
     <button class="btn btn-ghost" id="cfg-reset">Erase everything</button>
   </div>
 
-  <button class="cd cd-foot" data-go="s-home">cd ..</button>
 </section>
 
 </div>

@@ -1,5 +1,5 @@
 {
-  "name": "workouts",
+  "name": "calisthenics-workouts",
   "short_name": "workouts",
   "description": "A calisthenics logbook for one person.",
   "start_url": "./index.html",

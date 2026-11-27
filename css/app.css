@@ -48,33 +48,24 @@ body{
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 :focus-visible{outline:2px solid var(--accent);outline-offset:3px}
 
-/* ---- path-style header: workouts/this-week, cd .. ---- */
+/* path-style header (cw/this-week) with a cd .. back link */
 .crumb{
   display:flex;justify-content:space-between;align-items:baseline;gap:12px;
-  font-family:var(--mono);font-size:15px;margin:0 0 18px
+  font-family:var(--mono);font-size:15px;color:var(--muted);margin:0 0 18px
 }
-.crumb .path{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.crumb .app{color:var(--fg);font-weight:500}
-.crumb .sub{color:var(--muted)}
-.cd{
-  font-family:var(--mono);font-size:13px;color:var(--muted);padding:6px 0;flex:none
-}
+.crumb b{color:var(--fg);font-weight:500}
+.cd{font-family:var(--mono);font-size:13px;color:var(--muted);padding:6px 0}
 .cd:active{color:var(--accent)}
-.cd-foot{display:block;margin-top:28px}
 
-.label,.eyebrow{
-  font-family:var(--mono);font-size:13px;font-weight:400;color:var(--muted);
-  margin:0 0 10px;letter-spacing:0;text-transform:none
-}
-h1{font-family:var(--display);font-size:26px;font-weight:600;letter-spacing:-.02em;margin:0 0 4px;line-height:1.2}
+.label{font-family:var(--mono);font-size:13px;font-weight:400;color:var(--muted);margin:0 0 10px}
+h1{font-family:var(--display);font-size:26px;font-weight:600;letter-spacing:-.02em;margin:0 0 12px;line-height:1.2}
 h2.label{margin:30px 0 10px}
 p{margin:0 0 10px}
 .dim{color:var(--muted)}
 .small{font-size:13px}
-.mono{font-family:var(--mono)}
 .date{font-family:var(--mono);font-size:13px;color:var(--muted);margin:0 0 16px}
 
-.card{border:1px solid var(--line);border-radius:var(--r);padding:16px;transition:border-color .2s}
+.card{border:1px solid var(--line);border-radius:var(--r);padding:16px}
 .card + .card{margin-top:12px}
 .card.accent{border-color:var(--accent)}
 
@@ -236,7 +227,6 @@ button{font-family:inherit;font-size:16px;color:inherit;border:none;background:n
   z-index:50;opacity:0;pointer-events:none;transition:opacity .25s
 }
 .toast.on{opacity:1}
-hr{border:none;border-top:1px solid var(--line);margin:18px 0}
 input,textarea{user-select:text;-webkit-user-select:text}
 input[type=number].plain{
   width:100%;padding:12px;border-radius:10px;background:var(--soft);border:1px solid var(--line);
