@@ -2,17 +2,28 @@
 
 /* ============================================================
    EXERCISES
+   An archived exercise is no longer done but keeps its history: its chart, lifetime,
+   load, time under tension and milestones. replacedBy names the exercise that took its
+   place, so a session that logged it is not treated as having skipped that slot.
    ============================================================ */
 export const EX = {
   pushup: {name:"Push-ups",       unit:"reps", mode:"failure", sides:1, load:.64, spr:2.5,
            cue:"Body in one line, elbows about 45 degrees from your ribs."},
   row:    {name:"Inverted rows",  unit:"reps", mode:"failure", sides:1, load:.50, spr:2.5,
-           cue:"Under a sturdy table or bar at hip height, body straight. Shoulder blades pull together before the arms bend."},
+           cue:"Under a sturdy table or bar at hip height, body straight. Shoulder blades pull together before the arms bend.",
+           archived:true, replacedBy:"packrow"},
+  /* One arm at a time; the logged number is reps per arm, so sides is 2. The load is the
+     pack, not a share of bodyweight, so load is 0 and pack:true makes tonnage use the pack
+     weight saved on each session. About 1 s up and 2 s down, so 3 s per rep.             */
+  packrow:{name:"Backpack rows",  unit:"reps", mode:"failure", sides:2, load:0,   spr:3, pack:true,
+           per:"per arm",
+           cue:"One hand and knee on a bed or chair, flat back. Pull the pack to your hip, elbow close to your side. Lower slowly."},
   squat:  {name:"Slow squats",    unit:"reps", mode:"failure", sides:1, load:.70, spr:4,
            cue:"Three seconds down, one second up. Heels stay down."},
   pike:   {name:"Pike push-ups",  unit:"reps", mode:"failure", sides:1, load:.75, spr:2.5,
            cue:"Hips high, head travels forward of your hands, not straight down."},
   bridge: {name:"Single-leg glute bridge", unit:"reps", mode:"capped", sides:2, load:.40, spr:3,
+           per:"per leg",
            cue:"One leg at a time. Drive through the heel, ribs down, do not arch.",
            step:1, ceiling:18},
   situp:  {name:"Sit-ups",        unit:"reps", mode:"failure", sides:1, load:.40, spr:2,
@@ -21,7 +32,9 @@ export const EX = {
            cue:"Stack the hips, push the floor away, do not let the bottom hip sag.",
            step:5, ceiling:60}
 };
-export const FULL = ["pushup","row","squat","pike","bridge","situp","plank"];
+export const FULL = ["pushup","packrow","squat","pike","bridge","situp","plank"];
+export const ARCHIVED = Object.keys(EX).filter(id => EX[id].archived);
+export const PACK_MIN = 0.5, PACK_MAX = 50;   // kg
 export const SETS = 3;
 export const REST_SET = 20, REST_EX = 60, REST_SIDE = 10;
 

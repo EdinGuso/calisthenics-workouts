@@ -1,6 +1,6 @@
 /* Session flow: warm-up, sets, rests, feedback and the finish screen. */
 import { EX, FULL, SETS, REST_SET, REST_EX, REST_SIDE, WARMUP, FOOD } from "./config.js";
-import { store, newSession } from "./store.js";
+import { store, newSession, hasPack, packValue, PACK_ASK } from "./store.js";
 import { weekState } from "./weeks.js";
 import { targetFor, needsFeedback, nextBridgeTarget, holdSeconds, plankSetValue } from "./targets.js";
 import { milestones } from "./milestones.js";
@@ -75,6 +75,16 @@ function renderWork(){
   document.getElementById("w-cue").textContent = e.cue;
   document.getElementById("w-skip").style.display = S.set === 0 && S.side === 0 ? "block" : "none";
 
+  const ask = e.pack && !hasPack(store.db), pk = document.getElementById("w-pack");
+  document.getElementById("w-packask").style.display = ask ? "block" : "none";
+  pk.style.display = e.pack && !ask ? "block" : "none";
+  if(e.pack) pk.textContent = "Pack: " + store.db.pack + " kg";
+  if(ask){
+    document.getElementById("w-timer").style.display = "none";
+    document.getElementById("w-reps").style.display = "none";
+    return;
+  }
+
   const t = targetFor(store.db, id, S.set);
   const timed = e.unit === "secs";
   document.getElementById("w-timer").style.display = timed ? "block" : "none";
@@ -85,8 +95,7 @@ function renderWork(){
     document.getElementById("w-tgtline").textContent = "Hold " + t + " s";
     runClock(t);
   } else {
-    const label = e.sides === 2 ? "per leg" : "reps";
-    document.getElementById("w-unit").textContent = label;
+    document.getElementById("w-unit").textContent = e.per || "reps";
     const tn = document.getElementById("w-target");
     tn.textContent = t == null ? "free" : t;
     tn.className = "targetnum" + (t == null ? " none" : "");
@@ -209,7 +218,7 @@ function finish(){
   }
   if(log.bridge) DB.targets.bridge = nextBridgeTarget(DB, log.bridge, fb);
   const before = milestones(DB);
-  const sess = newSession(Date.now(), log);
+  const sess = newSession(Date.now(), log, DB.pack);
   DB.sessions.push(sess);
   DB.sessions.sort((a,b) => a.ts - b.ts);
   save();
@@ -246,6 +255,11 @@ export function initPlayer(){
     holdDone(n);
   };
   document.getElementById("w-skip").onclick = skipExercise;
+  document.getElementById("w-packask-save").onclick = () => {
+    const v = packValue(document.getElementById("w-packask-in").value);
+    if(v === null){ toast(PACK_ASK); return; }
+    store.db.pack = v; save(); click(); renderWork();
+  };
   document.getElementById("w-minus").onclick = () => { click(); setVal((+document.getElementById("w-val").value||0)-1); };
   document.getElementById("w-plus").onclick  = () => { click(); setVal((+document.getElementById("w-val").value||0)+1); };
   document.getElementById("w-val").oninput   = e => {

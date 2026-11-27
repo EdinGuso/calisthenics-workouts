@@ -40,14 +40,14 @@ test("dur: readable durations", () => {
 
 test("milestones: the full set of keys", () => {
   const keys = milestones(fixture(), NOW).map(m => m.k);
-  assert.equal(keys.length, 91);
-  assert.equal(new Set(keys).size, 91);
+  assert.equal(keys.length, 99);
+  assert.equal(new Set(keys).size, 99);
   assert.deepEqual(keys.slice(0, 8), [
     "r-pushup-100", "r-pushup-250", "r-pushup-500", "r-pushup-1000",
     "r-pushup-2500", "r-pushup-5000", "r-pushup-10000", "r-pushup-25000"
   ]);
   assert.ok(keys.includes("r-plank-300") && keys.includes("r-plank-72000"));
-  assert.deepEqual(keys.slice(56), [
+  assert.deepEqual(keys.slice(64), [
     "s-1", "s-5", "s-10", "s-25", "s-50", "s-100", "s-250", "s-500",
     "w-1", "w-2", "w-4", "w-8", "w-12", "w-26", "w-52", "w-104",
     "c-2", "c-4", "c-8", "c-12", "c-26", "c-52",

@@ -1,5 +1,5 @@
 /* Settings screen and the first-launch bodyweight question. */
-import { store, blank, hasBw, exportJson, exportName, parseImport } from "./store.js";
+import { store, blank, hasBw, hasPack, packValue, PACK_ASK, exportJson, exportName, parseImport } from "./store.js";
 import { EX } from "./config.js";
 import { clampPlank } from "./targets.js";
 import { save, show, paintHome, toast } from "./ui.js";
@@ -12,6 +12,7 @@ function setBw(v){
 
 function paintPlank(){
   document.getElementById("cfg-plank").value = store.db.targets.plank;
+  document.getElementById("cfg-pack").value = hasPack(store.db) ? store.db.pack : "";
 }
 function stepPlank(d){
   store.db.targets.plank = clampPlank(store.db.targets.plank + d * EX.plank.step);
@@ -21,6 +22,12 @@ function stepPlank(d){
 export function initSettings(){
   document.getElementById("cfg-plank-minus").onclick = () => stepPlank(-1);
   document.getElementById("cfg-plank-plus").onclick  = () => stepPlank(1);
+  const pack = document.getElementById("cfg-pack");
+  pack.onchange = () => {
+    const v = packValue(pack.value);
+    if(v === null){ toast(PACK_ASK); pack.value = hasPack(store.db) ? store.db.pack : ""; return; }
+    store.db.pack = v; save(); toast("Saved");
+  };
   const bw = document.getElementById("cfg-bw");
   bw.onchange = () => { if(!setBw(bw.value)) bw.value = hasBw(store.db) ? store.db.bw : ""; };
   document.getElementById("bw-ask-save").onclick = () => {

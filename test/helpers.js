@@ -25,5 +25,5 @@ export function session(date, log = {}) {
 
 /** A database with just these sessions. */
 export function dbWith(sessions, extra = {}) {
-  return { v: 2, bw: null, sessions, commits: {}, targets: { plank: 30 }, ...extra };
+  return { v: 2, bw: null, pack: null, sessions, commits: {}, targets: { plank: 30 }, ...extra };
 }

@@ -1,10 +1,10 @@
 /* Screens, painting and navigation. */
-import { EX, FULL, TON_TIERS } from "./config.js";
-import { store, write, hasBw } from "./store.js";
+import { EX, FULL, ARCHIVED, TON_TIERS } from "./config.js";
+import { store, write, hasBw, hasPack } from "./store.js";
 import { weekKey, chain, weekState } from "./weeks.js";
 import { history, targetFor } from "./targets.js";
 import { lifetime, tonnage, milestones } from "./milestones.js";
-import { chartHtml } from "./chart.js";
+import { chartHtml, switchAt } from "./chart.js";
 import { click } from "./audio.js";
 
 export function save(){ if(!write(store.db)) toast("Could not save"); }
@@ -32,7 +32,8 @@ function chart(){
 function paintStats(){
   const DB = store.db;
   const chips = [{id:"__vol", n:"Session volume"}].concat(
-    FULL.map(id => ({id, n:EX[id].name})));
+    FULL.map(id => ({id, n:EX[id].name})),
+    ARCHIVED.map(id => ({id, n:EX[id].name + " (archived)"})));
   document.getElementById("st-chips").innerHTML = chips.map(c =>
     '<button class="chip '+(c.id===stSel?"sel":"")+'" data-ex="'+c.id+'">'+c.n+'</button>').join("");
   document.querySelectorAll("[data-ex]").forEach(b => b.onclick = () => {
@@ -41,6 +42,8 @@ function paintStats(){
   const btn = document.getElementById("st-mode");
   btn.style.display = stSel === "__vol" ? "none" : "block";
   document.getElementById("st-skiplegend").style.display = stSel === "__vol" ? "" : "none";
+  document.getElementById("st-switchlegend").style.display =
+    stSel === "__vol" && switchAt(DB) != null ? "" : "none";
   btn.textContent = stMode === "total" ? "Show by set" : "Show total";
   chart();
 
@@ -53,7 +56,8 @@ function paintStats(){
       sum = row("Sessions", h.length) + row("Best single set", best + " " + e.unit) +
             row("Best session total", Math.max.apply(null,totals) + " " + e.unit) +
             row("Lifetime", lifetime(DB, stSel).toLocaleString("en-GB") + " " + e.unit) +
-            row("Next targets", [0,1,2].map(i => targetFor(DB, stSel, i) || "-").join(" / "));
+            (e.archived ? "" :
+              row("Next targets", [0,1,2].map(i => targetFor(DB, stSel, i) || "-").join(" / ")));
     } else sum = '<p class="dim small" style="margin:0">Not done yet.</p>';
   } else {
     const c = chain(DB);
@@ -142,6 +146,7 @@ export function show(id){
   if(id === "s-set"){
     document.getElementById("cfg-bw").value = hasBw(store.db) ? store.db.bw : "";
     document.getElementById("cfg-plank").value = store.db.targets.plank;
+    document.getElementById("cfg-pack").value = hasPack(store.db) ? store.db.pack : "";
   }
 }
 export function mmss(s){ return Math.floor(s/60) + ":" + String(s%60).padStart(2,"0"); }
