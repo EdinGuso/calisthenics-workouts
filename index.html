@@ -82,6 +82,15 @@
   </div>
   <div class="exname" id="w-name"></div>
   <div class="cue" id="w-cue"></div>
+  <div class="cue" id="w-pack" style="display:none;margin-top:-14px"></div>
+
+  <!-- backpack weight, asked once if Settings has none -->
+  <div class="card" id="w-packask" style="display:none;border-color:var(--accent)">
+    <div class="metalab">Backpack weight in kg</div>
+    <p class="small dim" style="margin:6px 0 10px">Saved with each session to work out load moved. You can change it in Settings.</p>
+    <input class="plain" id="w-packask-in" type="number" inputmode="decimal" placeholder="kg">
+    <button class="btn btn-primary" id="w-packask-save" style="margin-top:10px">Save</button>
+  </div>
 
   <!-- timed variant -->
   <div id="w-timer" style="display:none">
@@ -169,7 +178,7 @@
   <div class="chips" id="st-chips"></div>
   <div class="card">
     <div id="st-chart"></div>
-    <div class="legend"><span><i></i>Per session</span><span><i class="avg"></i>Average of 5</span><span id="st-skiplegend"><b class="hollow"></b>Exercise skipped</span></div>
+    <div class="legend"><span><i></i>Per session</span><span><i class="avg"></i>Average of 5</span><span id="st-skiplegend"><b class="hollow"></b>Exercise skipped</span><span id="st-switchlegend"><i class="switch"></i>Programme changed</span></div>
   </div>
   <div class="btn-row" style="margin-top:10px">
     <button class="btn" id="st-mode">Show by set</button>
@@ -205,6 +214,10 @@
     <input id="cfg-plank" type="number" readonly value="30">
     <button id="cfg-plank-plus">+</button>
   </div>
+
+  <h2 class="label">/backpack-weight</h2>
+  <p class="small dim" style="margin-top:-6px">Kilograms in the pack for backpack rows. Saved with each session.</p>
+  <input class="plain" id="cfg-pack" type="number" inputmode="decimal" placeholder="kg">
 
   <h2 class="label">/your-data</h2>
   <p class="small dim" style="margin-top:-6px">Everything lives on this phone only. Export now and then.</p>

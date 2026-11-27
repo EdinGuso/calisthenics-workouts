@@ -13,10 +13,20 @@ export function dur(s){
 export function lifetime(db, id){
   return history(db, id).reduce((a,x) => a + x.vals.reduce((p,q) => p+q, 0), 0) * EX[id].sides;
 }
-export function tonnage(db){   // null until a bodyweight is set
+/* null until a bodyweight is set. Bodyweight exercises move a share of it per rep. A pack
+   exercise moves the pack weight saved on that session, so changing the setting later never
+   changes past load; a session without a pack weight adds nothing.                         */
+export function tonnage(db){
   if(!hasBw(db)) return null;
   let kg = 0;
-  Object.keys(EX).forEach(id => { kg += lifetime(db, id) * EX[id].load * db.bw; });
+  Object.keys(EX).forEach(id => {
+    if(EX[id].pack){
+      db.sessions.forEach(s => {
+        if(s.log[id] && s.pack > 0) kg += s.log[id].reduce((p,q) => p+q, 0) * EX[id].sides * s.pack;
+      });
+    }
+    else kg += lifetime(db, id) * EX[id].load * db.bw;
+  });
   return Math.round(kg);
 }
 export function tut(db){   // seconds under tension
