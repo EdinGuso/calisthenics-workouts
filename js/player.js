@@ -191,14 +191,16 @@ function rest(secs, label, done){
 /* ---- finish ---- */
 function finish(){
   const DB = store.db;
-  clearInterval(rt); clearInterval(clk); endSession();
-  if(!Object.keys(S.log).length){
-    S = null; show("s-home"); toast("Every exercise skipped. Nothing saved.");
+  clearInterval(rt); clearInterval(clk);
+  const { log, fb } = S;
+  S = null; endSession();   // no session is active from here on, so the wake lock stays off
+  if(!Object.keys(log).length){
+    show("s-home"); toast("Every exercise skipped. Nothing saved.");
     return;
   }
-  if(S.log.bridge) DB.targets.bridge = nextBridgeTarget(DB, S.log.bridge, S.fb);
+  if(log.bridge) DB.targets.bridge = nextBridgeTarget(DB, log.bridge, fb);
   const before = milestones(DB);
-  const sess = newSession(Date.now(), S.log);
+  const sess = newSession(Date.now(), log);
   DB.sessions.push(sess);
   DB.sessions.sort((a,b) => a.ts - b.ts);
   save();
