@@ -38,6 +38,13 @@ Synthetic demo data, 375 x 812.
 - **Skipping is not failing.** An exercise can be skipped before its first set. Nothing is
   logged for it, so its targets and charts are untouched, and the session-volume chart draws
   that session as a hollow point.
+- **Backpack rows.** The pull is a one-arm row with a loaded backpack, logged per arm. The pack
+  weight is set in Settings (asked for on the first set if empty) and saved with each session,
+  so changing it later never changes past load moved.
+- **Archived exercises.** Inverted rows left the programme when backpack rows replaced them.
+  Their chart stays under an "(archived)" chip, and their reps keep counting toward lifetime
+  totals, load moved, time under tension and milestones. The session-volume chart marks where
+  the programme changed.
 - **Milestones that cannot be lost.** Lifetime reps and hold time per exercise, sessions,
   banked weeks, total load moved and time under tension.
 - **Derived, not stored.** Streak, freezes, totals and milestones are recomputed from the
@@ -48,8 +55,9 @@ Synthetic demo data, 375 x 812.
 - Everything is stored in the browser's `localStorage`. There is no account, server or
   analytics.
 - The data is one JSON value under the key `workouts.v2`:
-  `{v:2, bw, sessions:[{id, ts, log}], commits, targets:{bridge, plank}}`. A session's `log`
-  maps each exercise done to its sets; a skipped exercise has no entry.
+  `{v:2, bw, pack, sessions:[{id, ts, log, pack}], commits, targets:{bridge, plank}}`. A
+  session's `log` maps each exercise done to its sets; a skipped exercise has no entry. `pack`
+  is the backpack weight in kg; a session has it only when backpack rows were done.
 - Settings has export and import to a JSON file. Import accepts only files in this format.
   Export now and then: clearing the browser's data, or removing a home-screen app on iOS,
   deletes the log.
