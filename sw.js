@@ -3,10 +3,22 @@
    background so an update you push lands on the next launch. Your training
    data lives in localStorage and is never touched by any of this. */
 
-const CACHE = "ledger-v1";
+const CACHE = "ledger-v2";
 const FILES = [
   "./",
   "./index.html",
+  "./css/app.css",
+  "./js/main.js",
+  "./js/config.js",
+  "./js/store.js",
+  "./js/weeks.js",
+  "./js/targets.js",
+  "./js/milestones.js",
+  "./js/chart.js",
+  "./js/audio.js",
+  "./js/ui.js",
+  "./js/player.js",
+  "./js/settings.js",
   "./manifest.webmanifest",
   "./icon-180.png",
   "./icon-192.png",
