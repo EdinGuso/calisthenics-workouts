@@ -14,12 +14,11 @@ To be added.
 ## Design
 
 - **Weekly banking instead of a daily streak.** Each week (Monday to Sunday) has a target of
-  2.0 credits. A full session is worth 1.0 and a short one 0.5. A week that reaches the target
-  is banked, and the streak counts banked weeks in a row. A missed day costs nothing; a missed
-  week does.
-- **Freezes.** A week with 3.0 credits or more earns a freeze, up to two stored. A week that
+  two sessions. A week that reaches the target is banked, and the streak counts banked weeks in
+  a row. A missed day costs nothing; a missed week does.
+- **Freezes.** A week with three sessions or more earns a freeze, up to two stored. A week that
   falls short spends a freeze instead of breaking the streak.
-- **A week card that shows today's cost.** The home screen shows this week's credit and how
+- **A week card that shows today's cost.** The home screen shows this week's sessions and how
   tight the remaining days are (on track, getting tight, at risk, out of days).
 - **Adaptive per-set targets.** For exercises done to failure, the target for each set is one
   more than the best of the last three sessions at that set. Exercises with a fixed target ask
@@ -69,7 +68,7 @@ js/main.js             entry point: loads data, wires screens, registers the ser
 js/config.js           exercises, timings, warm-up, food suggestions, milestone tiers
 js/store.js            localStorage load and save, export and import
 js/weeks.js            ISO weeks, banking, streak and freezes, week card state
-js/targets.js          exercise history, per-set targets, short-session pick
+js/targets.js          exercise history and per-set targets
 js/milestones.js       lifetime totals, load moved, time under tension, milestones
 js/chart.js            progress chart as SVG
 js/audio.js            beeps
