@@ -244,6 +244,13 @@ input[type=number].plain{
   <p class="eyebrow" id="home-date"></p>
   <h1>This week</h1>
 
+  <div class="card" id="bw-ask" style="display:none;border-color:var(--brass)">
+    <div class="metalab">Your bodyweight in kg</div>
+    <p class="small dim" style="margin:6px 0 10px">Used only to estimate the load you move. You can change it in Settings.</p>
+    <input class="plain" id="bw-ask-in" type="number" inputmode="decimal" placeholder="kg">
+    <button class="btn btn-primary" id="bw-ask-save" style="margin-top:10px">Save</button>
+  </div>
+
   <div class="card">
     <div class="weekline">
       <div class="credit" id="wk-credit">0.0<span>/2.0</span></div>
@@ -431,7 +438,7 @@ input[type=number].plain{
 
   <h2>Bodyweight</h2>
   <p class="small dim" style="margin-top:-6px">Used only to work out load moved.</p>
-  <input class="plain" id="cfg-bw" type="number" inputmode="decimal" value="74">
+  <input class="plain" id="cfg-bw" type="number" inputmode="decimal" placeholder="kg">
 
   <h2>Your data</h2>
   <p class="small dim" style="margin-top:-6px">Everything lives on this phone only. Export now and then.</p>
@@ -465,7 +472,7 @@ const EX = {
   pushup: {name:"Push-ups",       unit:"reps", mode:"failure", sides:1, load:.64, spr:2.5,
            cue:"Body in one line, elbows about 45 degrees from your ribs."},
   row:    {name:"Inverted rows",  unit:"reps", mode:"failure", sides:1, load:.50, spr:2.5,
-           cue:"Under the table, body straight. Shoulder blades pull together before the arms bend."},
+           cue:"Under a sturdy table or bar at hip height, body straight. Shoulder blades pull together before the arms bend."},
   squat:  {name:"Slow squats",    unit:"reps", mode:"failure", sides:1, load:.70, spr:4,
            cue:"Three seconds down, one second up. Heels stay down."},
   pike:   {name:"Pike push-ups",  unit:"reps", mode:"failure", sides:1, load:.75, spr:2.5,
@@ -488,7 +495,7 @@ const WARMUP = [
   {n:"World's greatest stretch", s:60, d:"30 seconds each side"},
   {n:"Dead bug",               s:45, d:"Lower back stays flat on the floor"},
   {n:"Glute bridges",          s:40, d:"Both legs, squeeze at the top"},
-  {n:"Prone Y-T-W",            s:60, d:"Face down with the 2 kg dumbbells, light and slow"}
+  {n:"Prone Y-T-W",            s:60, d:"Face down with light dumbbells or water bottles, slow"}
 ];
 
 const FOOD = [
@@ -515,12 +522,13 @@ const FOOD = [
 const KEY = "ledger.v1";
 let DB = load();
 
-function blank(){ return {v:1, bw:74, sessions:[], commits:{}, caps:{}, seen:[]}; }
+function blank(){ return {v:1, bw:null, sessions:[], commits:{}, caps:{}, seen:[]}; }
 function load(){
   try{ const r = localStorage.getItem(KEY); if(r) return Object.assign(blank(), JSON.parse(r)); }
   catch(e){ console.warn(e); }
   return blank();
 }
+function hasBw(){ return typeof DB.bw === "number" && DB.bw > 0; }
 function save(){ try{ localStorage.setItem(KEY, JSON.stringify(DB)); }catch(e){ toast("Could not save"); } }
 
 /* ============================================================
@@ -902,7 +910,8 @@ function dur(s){
 function lifetime(id){
   return history(id).reduce((a,x) => a + x.vals.reduce((p,q) => p+q, 0), 0) * EX[id].sides;
 }
-function tonnage(){
+function tonnage(){   // null until a bodyweight is set
+  if(!hasBw()) return null;
   let kg = 0;
   Object.keys(EX).forEach(id => { kg += lifetime(id) * EX[id].load * DB.bw; });
   return Math.round(kg);
@@ -936,7 +945,10 @@ function milestones(){
     k:"c-"+t, got:c.streak>=t, p:Math.min(1,c.streak/t),
     name: t + " weeks in a row", sub: "streak is " + c.streak}));
   const kg = tonnage();
-  TON_TIERS.forEach(t => out.push({
+  TON_TIERS.forEach(t => out.push(kg === null ? {
+    k:"t-"+t[0], got:false, p:0, na:true,
+    name: t[0].toLocaleString("en-GB") + " kg moved",
+    sub: "Set bodyweight in Settings"} : {
     k:"t-"+t[0], got:kg>=t[0], p:Math.min(1,kg/t[0]),
     name: t[0].toLocaleString("en-GB") + " kg moved",
     sub: "the weight of " + t[1]}));
@@ -1067,6 +1079,7 @@ function paintHome(){
   document.getElementById("m-streak").textContent = c.streak;
   document.getElementById("m-freeze").textContent = c.freezes;
   document.getElementById("m-total").textContent = DB.sessions.length;
+  document.getElementById("bw-ask").style.display = hasBw() ? "none" : "block";
 
   const key = w.key, sel = DB.commits[key] || [];
   const dow = new Date().getDay() || 7;
@@ -1090,18 +1103,23 @@ function paintHome(){
 }
 function paintAch(){
   const kg = tonnage();
-  document.getElementById("a-tonnage").textContent = kg.toLocaleString("en-GB") + " kg";
-  const next = TON_TIERS.find(t => kg < t[0]);
-  document.getElementById("a-tonnage-note").textContent = next
-    ? (next[0]-kg).toLocaleString("en-GB") + " kg to " + next[1] + "."
-    : "You have moved the Eiffel Tower. Take the morning off.";
+  if(kg === null){
+    document.getElementById("a-tonnage").textContent = "-";
+    document.getElementById("a-tonnage-note").textContent = "Set bodyweight in Settings.";
+  } else {
+    document.getElementById("a-tonnage").textContent = kg.toLocaleString("en-GB") + " kg";
+    const next = TON_TIERS.find(t => kg < t[0]);
+    document.getElementById("a-tonnage-note").textContent = next
+      ? (next[0]-kg).toLocaleString("en-GB") + " kg to " + next[1] + "."
+      : "You have moved the Eiffel Tower. Take the morning off.";
+  }
   const ms = milestones();
   const got = ms.filter(m => m.got);
   const near = ms.filter(m => !m.got).sort((a,b) => b.p - a.p).slice(0, 8);
   const render = m => '<div class="ach '+(m.got?"got":"locked")+'">'+
-    '<span class="med">'+(m.got?"✓":Math.round(m.p*100)+"%")+'</span>'+
+    '<span class="med">'+(m.got?"✓":m.na?"-":Math.round(m.p*100)+"%")+'</span>'+
     '<span class="nm">'+m.name+'<small>'+m.sub+'</small>'+
-    (m.got?"":'<span class="bar"><i style="width:'+(m.p*100)+'%"></i></span>')+'</span></div>';
+    (m.got||m.na?"":'<span class="bar"><i style="width:'+(m.p*100)+'%"></i></span>')+'</span></div>';
   document.getElementById("a-list").innerHTML =
     '<h2>Coming up</h2><div class="card">' +
       (near.length ? near.map(render).join("") : '<p class="dim small" style="margin:0">All done.</p>') +
@@ -1121,6 +1139,7 @@ function show(id){
   if(id === "s-stats") paintStats();
   if(id === "s-ach") paintAch();
   if(id === "s-home") paintHome();
+  if(id === "s-set") bw.value = hasBw() ? DB.bw : "";
 }
 function mmss(s){ return Math.floor(s/60) + ":" + String(s%60).padStart(2,"0"); }
 let tt = null;
@@ -1136,8 +1155,15 @@ document.getElementById("pick-short").onclick = () => start("short");
 
 /* settings */
 const bw = document.getElementById("cfg-bw");
-bw.value = DB.bw;
-bw.onchange = () => { DB.bw = +bw.value || 74; save(); toast("Saved"); };
+function setBw(v){
+  v = +v;
+  if(!(v > 0)){ toast("Enter your weight in kg"); return false; }
+  DB.bw = v; save(); toast("Saved"); return true;
+}
+bw.onchange = () => { if(!setBw(bw.value)) bw.value = hasBw() ? DB.bw : ""; };
+document.getElementById("bw-ask-save").onclick = () => {
+  if(setBw(document.getElementById("bw-ask-in").value)) paintHome();
+};
 document.getElementById("cfg-export").onclick = () => {
   const blob = new Blob([JSON.stringify(DB,null,2)], {type:"application/json"});
   const a = document.createElement("a");
