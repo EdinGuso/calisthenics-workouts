@@ -13,8 +13,8 @@ test("newSession: a session holds id, ts and the exercises that were done", () =
   assert.deepEqual(newSession(ts, log), { id: ts, ts, log });
 });
 
-test("blank: a new database is v2 with the default plank target", () => {
-  assert.deepEqual(blank(), { v: 2, bw: null, sessions: [], commits: {}, targets: { plank: 30 } });
+test("blank: a new database is v2 with the default plank target and no pack weight", () => {
+  assert.deepEqual(blank(), { v: 2, bw: null, pack: null, sessions: [], commits: {}, targets: { plank: 30 } });
 });
 
 test("parseImport: accepts a v2 export and round-trips it", () => {
